@@ -20,3 +20,6 @@ npm-debug.log*
 # Environment files
 .env
 .env.local
+
+# Keep workflow directory
+!.github/

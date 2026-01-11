@@ -4,7 +4,9 @@
   "description": "Daaris Global - Educational Offers Website",
   "main": "index.html",
   "scripts": {
-    "serve": "npx http-server . -p 8080 -o"
+    "serve": "npx http-server . -p 8080 -o",
+    "build": "node build.js",
+    "clean": "node -e \"const fs=require('fs');if(fs.existsSync('dist')){fs.rmSync('dist',{recursive:true})}\""
   },
   "keywords": [
     "education",
@@ -12,5 +14,10 @@
     "daaris-global"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "clean-css": "^5.3.3",
+    "html-minifier-terser": "^7.2.0",
+    "terser": "^5.31.0"
+  }
 }
