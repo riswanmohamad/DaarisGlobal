@@ -104,34 +104,13 @@
     function createOfferCard(offer, index) {
         const thumbnailUrl = getThumbnailUrl(offer.imageId);
         const escapedName = escapeHtml(offer.name);
-        
-        const imageContent = thumbnailUrl 
-            ? `<img data-src="${thumbnailUrl}" alt="${escapedName}" class="offer-image lazy" onerror="this.parentElement.innerHTML='<div class=\\'offer-placeholder\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'currentColor\\' stroke-width=\\'2\\'><rect x=\\'3\\' y=\\'3\\' width=\\'18\\' height=\\'18\\' rx=\\'2\\'/><circle cx=\\'8.5\\' cy=\\'8.5\\' r=\\'1.5\\'/><path d=\\'m21 15-5-5L5 21\\'/></svg></div>'">`
-            : `<div class="offer-placeholder">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2"/>
-                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                    <path d="m21 15-5-5L5 21"/>
-                </svg>
-               </div>`;
 
-        return `
-            <article class="offer-card" data-index="${index}" data-image-id="${offer.imageId}" tabindex="0" role="button" aria-label="View ${escapedName}">
-                <div class="offer-image-wrapper">
-                    ${imageContent}
-                    <div class="offer-overlay">
-                        <div class="view-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="offer-info">
-                    <h3 class="offer-title">${escapedName}</h3>
-                </div>
-            </article>
-        `;
+        const placeholderHtml = '<div class="offer-placeholder"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>';
+        const imageContent = thumbnailUrl
+            ? `<img data-src="${thumbnailUrl}" alt="${escapedName}" class="offer-image lazy" onerror="this.parentElement.innerHTML='${placeholderHtml.replace(/'/g, "\\'")}'">`
+            : placeholderHtml;
+
+        return `<article class="offer-card" data-index="${index}" data-image-id="${offer.imageId}" tabindex="0" role="button" aria-label="View ${escapedName}"><div class="offer-image-wrapper">${imageContent}<div class="offer-overlay"><div class="view-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div></div></div><div class="offer-info"><h3 class="offer-title">${escapedName}</h3></div></article>`;
     }
 
     /**
@@ -482,31 +461,8 @@
             
         } catch (error) {
             console.error('Error loading offers:', error);
-            elements.loading.innerHTML = `
-                <div style="color: var(--accent-purple); text-align: center;">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 48px; height: 48px; margin: 0 auto 1rem;">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
-                    <h3 style="margin-bottom: 0.5rem;">Unable to Load Offers</h3>
-                    <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto;">
-                        ${error.message}<br><br>
-                        Please check your configuration in <code>js/config.js</code>
-                    </p>
-                    <details style="margin-top: 1rem; cursor: pointer;">
-                        <summary style="color: var(--text-muted);">Setup Instructions</summary>
-                        <ol style="text-align: left; max-width: 600px; margin: 1rem auto; color: var(--text-muted); font-size: 0.875rem;">
-                            <li>Create a folder in Google Drive and upload images</li>
-                            <li>Right-click folder → Share → "Anyone with the link" can view</li>
-                            <li>Copy the folder ID from the URL</li>
-                            <li>Get an API key from Google Cloud Console</li>
-                            <li>Enable Google Drive API</li>
-                            <li>Update js/config.js with your API key and folder ID</li>
-                        </ol>
-                    </details>
-                </div>
-            `;
+            const msg = String(error && error.message ? error.message : 'Unknown error');
+            elements.loading.innerHTML = `<div style="color: var(--accent-purple); text-align: center;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:48px;height:48px;margin:0 auto 1rem;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg><h3 style="margin-bottom:.5rem;">Unable to Load Offers</h3><p style="color: var(--text-muted); max-width: 500px; margin: 0 auto;">${escapeHtml(msg)}<br><br>Please check your configuration in <code>js/config.js</code></p><details style="margin-top:1rem;cursor:pointer;"><summary style="color: var(--text-muted);">Setup Instructions</summary><ol style="text-align:left;max-width:600px;margin:1rem auto;color: var(--text-muted);font-size:.875rem;"><li>Create a folder in Google Drive and upload images</li><li>Right-click folder → Share → "Anyone with the link" can view</li><li>Copy the folder ID from the URL</li><li>Get an API key from Google Cloud Console</li><li>Enable Google Drive API</li><li>Update js/config.js with your API key and folder ID</li></ol></details></div>`;
         }
     }
     
