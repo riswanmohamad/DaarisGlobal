@@ -1,0 +1,16 @@
+{
+  "name": "daaris-global",
+  "version": "1.0.0",
+  "description": "Daaris Global - Educational Offers Website",
+  "main": "index.html",
+  "scripts": {
+    "serve": "npx http-server . -p 8080 -o"
+  },
+  "keywords": [
+    "education",
+    "offers",
+    "daaris-global"
+  ],
+  "author": "",
+  "license": "MIT"
+}
