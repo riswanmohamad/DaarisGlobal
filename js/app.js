@@ -85,7 +85,7 @@ async function fetchOffers() {
             name: extractOfferName(file.name),
             originalName: file.name,
             thumbnailUrl: `https://drive.google.com/thumbnail?id=${file.id}&sz=w400`,
-            fullImageUrl: `https://drive.google.com/uc?export=view&id=${file.id}`
+            fullImageUrl: `https://lh3.googleusercontent.com/d/${file.id}`
         }));
 
         filteredOffers = [...allOffers];
