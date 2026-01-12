@@ -250,15 +250,21 @@ body {
 }
 
 .modal-content {
-    max-width: 90%;
-    max-height: 90%;
     text-align: center;
+}
+
+.modal-image-frame {
     position: relative;
+    width: min(1100px, 92vw);
+    height: min(72vh, 680px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #modalImage {
-    max-width: 100%;
-    max-height: 80vh;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     border-radius: 10px;
     box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
@@ -266,7 +272,7 @@ body {
 
 .modal-nav {
     position: absolute;
-    top: 40vh;
+    top: 50%;
     transform: translateY(-50%);
     width: 44px;
     height: 44px;
@@ -311,11 +317,11 @@ body {
 }
 
 .modal-nav-prev {
-    left: -58px;
+    left: 14px;
 }
 
 .modal-nav-next {
-    right: -58px;
+    right: 14px;
 }
 
 .modal-caption {
@@ -374,12 +380,8 @@ body {
         font-size: 1rem;
     }
 
-    .modal-nav-prev {
-        left: -46px;
-    }
-
-    .modal-nav-next {
-        right: -46px;
+    .modal-image-frame {
+        height: min(70vh, 620px);
     }
 }
 
@@ -446,16 +448,9 @@ body {
         height: 42px;
     }
 
-    .modal-nav-prev {
-        left: -18px;
-    }
-
-    .modal-nav-next {
-        right: -18px;
-    }
-
-    #modalImage {
-        max-height: 70vh;
+    .modal-image-frame {
+        width: 94vw;
+        height: min(68vh, 520px);
     }
 }
 
@@ -477,8 +472,8 @@ body {
 
 /* Landscape Mobile Orientation */
 @media (max-height: 500px) and (orientation: landscape) {
-    #modalImage {
-        max-height: 85vh;
+    .modal-image-frame {
+        height: min(78vh, 420px);
     }
 
     .modal-caption {
