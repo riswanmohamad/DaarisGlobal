@@ -6,6 +6,7 @@
 // State management
 let allOffers = [];
 let filteredOffers = [];
+let currentOfferIndex = -1;
 
 // DOM Elements
 const offersGrid = document.getElementById('offersGrid');
@@ -17,6 +18,8 @@ const imageModal = document.getElementById('imageModal');
 const modalImage = document.getElementById('modalImage');
 const modalCaption = document.getElementById('modalCaption');
 const closeModal = document.querySelector('.close-modal');
+const prevButton = document.getElementById('prevButton');
+const nextButton = document.getElementById('nextButton');
 
 /**
  * Initialize the application
@@ -47,10 +50,33 @@ function setupEventListeners() {
         }
     });
 
+    // Modal navigation
+    prevButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showPreviousOffer();
+    });
+    nextButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showNextOffer();
+    });
+
     // Close modal with Escape key
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && imageModal.classList.contains('active')) {
+        if (!imageModal.classList.contains('active')) return;
+
+        if (e.key === 'Escape') {
             closeImageModal();
+            return;
+        }
+
+        if (e.key === 'ArrowLeft') {
+            showPreviousOffer();
+            return;
+        }
+
+        if (e.key === 'ArrowRight') {
+            showNextOffer();
+            return;
         }
     });
 }
@@ -123,6 +149,16 @@ function filterOffers(query) {
     }
     
     renderOffers();
+
+    // If the modal is open, keep navigation consistent with the filtered list
+    if (imageModal.classList.contains('active')) {
+        const currentId = filteredOffers[currentOfferIndex]?.id;
+        if (currentId) {
+            const newIndex = filteredOffers.findIndex(o => o.id === currentId);
+            currentOfferIndex = newIndex;
+        }
+        updateModalNavigation();
+    }
 }
 
 /**
@@ -177,13 +213,39 @@ function createOfferCard(offer, index) {
  * Open the image modal with full-screen image
  */
 function openImageModal(offer) {
+    const index = filteredOffers.findIndex(o => o.id === offer.id);
+    openImageModalByIndex(index >= 0 ? index : 0);
+}
+
+function openImageModalByIndex(index) {
+    if (!filteredOffers.length) return;
+    currentOfferIndex = Math.min(Math.max(index, 0), filteredOffers.length - 1);
+
+    const offer = filteredOffers[currentOfferIndex];
     modalImage.src = offer.fullImageUrl;
     modalImage.alt = offer.name;
     modalCaption.textContent = offer.name;
     imageModal.classList.add('active');
+    updateModalNavigation();
     
     // Prevent body scroll when modal is open
     document.body.style.overflow = 'hidden';
+}
+
+function updateModalNavigation() {
+    const hasOffers = filteredOffers.length > 0;
+    prevButton.disabled = !hasOffers || currentOfferIndex <= 0;
+    nextButton.disabled = !hasOffers || currentOfferIndex >= filteredOffers.length - 1;
+}
+
+function showPreviousOffer() {
+    if (currentOfferIndex <= 0) return;
+    openImageModalByIndex(currentOfferIndex - 1);
+}
+
+function showNextOffer() {
+    if (currentOfferIndex >= filteredOffers.length - 1) return;
+    openImageModalByIndex(currentOfferIndex + 1);
 }
 
 /**
@@ -193,6 +255,7 @@ function closeImageModal() {
     imageModal.classList.remove('active');
     modalImage.src = '';
     modalCaption.textContent = '';
+    currentOfferIndex = -1;
     
     // Restore body scroll
     document.body.style.overflow = 'auto';
